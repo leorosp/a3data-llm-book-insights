@@ -26,16 +26,24 @@ com opinioes relevantes.
 
 ## Alinhamento com o Desafio
 
-O projeto cobre os principais pontos solicitados:
+O projeto foi estruturado para demonstrar uma solucao completa, indo alem da
+execucao tecnica do modelo. A entrega parte do problema de negocio, organiza um
+fluxo reproduzivel de dados e apresenta uma POC capaz de apoiar analistas na
+exploracao de avaliacoes textuais.
 
-- apresentacao do problema e planejamento em `PLANO_PROJETO.md`;
-- processo tecnico reproduzivel por scripts numerados;
-- analise exploratoria e metricas pelo script `05_gerar_resumo_executivo.py`;
-- proposta de sumarizacao e RAG com LangChain;
-- uso de base de conhecimento local com Chroma;
-- metricas para avaliar qualidade do resultado;
-- estimativa de impacto financeiro e operacional;
-- POC opcional em Streamlit.
+A solucao atende ao desafio em quatro dimensoes principais:
+
+- **Negocio:** traduz o processo manual da editora em uma hipotese mensuravel
+  de reducao de tempo, custo e esforco analitico.
+- **Dados e NLP:** prepara avaliacoes e metadados, cria documentos textuais e
+  utiliza busca semantica para recuperar evidencias relevantes.
+- **Base de conhecimento:** usa Chroma como repositorio vetorial local,
+  permitindo consultas por contexto e nao apenas por palavras-chave.
+- **Produto analitico:** disponibiliza scripts reproduziveis, resumo executivo
+  local e interface Streamlit para demonstrar a solucao durante a apresentacao.
+
+Essa organizacao permite discutir tanto as decisoes tecnicas quanto o impacto
+esperado para o time de negocio, conforme solicitado no enunciado.
 
 ## Arquitetura da Solucao
 
