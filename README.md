@@ -1,44 +1,66 @@
-# A3Data - Analise de Avaliacoes de Livros com Modelos de Linguagem
+# A3Data - Analise Semantica de Avaliacoes de Livros
 
-Projeto desenvolvido para o desafio tecnico de Cientista de Dados Sr. com foco
-em processamento de linguagem natural e modelos de linguagem.
+Projeto desenvolvido para o desafio tecnico de Cientista de Dados com foco em
+NLP, busca semantica, base de conhecimento e impacto de negocio.
 
-## Objetivo do Projeto
+## Resumo Executivo
 
-Construir uma prova de conceito para ajudar uma editora a explorar avaliacoes
-de livros e metadados de forma mais rapida, estruturada e orientada por
-evidencias.
+A editora do desafio realiza a exploracao de avaliacoes de livros de forma
+manual. O processo informado leva cerca de 3 dias, envolve 5 analistas e tem
+custo operacional relevante.
 
-A versao inicial utiliza LangChain para:
+A proposta deste projeto e uma POC que combina:
 
-- carregar e preparar os dados de avaliacoes;
-- transformar avaliacoes em documentos pesquisaveis;
-- criar representacoes vetoriais e uma base local de busca semantica;
-- responder perguntas de negocio com evidencias recuperadas;
-- apoiar a construcao da apresentacao executiva final.
+- preparacao de dados textuais e metadados de livros;
+- analise exploratoria da base tratada;
+- busca semantica com LangChain e Chroma;
+- recuperacao de evidencias textuais por pergunta de negocio;
+- estimativa de reducao de custo e tempo do processo manual;
+- interface Streamlit para exploracao visual.
 
-## Pergunta Central da Versao Inicial
+## Objetivo
 
-Uma solucao RAG com LangChain consegue reduzir o tempo necessario para analisar
-avaliacoes de livros, substituindo parte do fluxo manual de 3 dias por uma
-exploracao guiada e baseada em evidencias?
+Reduzir o tempo de triagem e exploracao das avaliacoes, permitindo que analistas
+encontrem rapidamente evidencias sobre autores, categorias, livros e usuarios
+com opinioes relevantes.
 
-## Primeiro Marco
+## Alinhamento com o Desafio
 
-Criar um fluxo RAG executado pelo terminal:
+O projeto cobre os principais pontos solicitados:
+
+- apresentacao do problema e planejamento em `PLANO_PROJETO.md`;
+- processo tecnico reproduzivel por scripts numerados;
+- analise exploratoria e metricas pelo script `05_gerar_resumo_executivo.py`;
+- proposta de sumarizacao e RAG com LangChain;
+- uso de base de conhecimento local com Chroma;
+- metricas para avaliar qualidade do resultado;
+- estimativa de impacto financeiro e operacional;
+- POC opcional em Streamlit.
+
+## Arquitetura da Solucao
 
 ```text
-pergunta de negocio -> busca semantica nas avaliacoes -> evidencias citadas -> resposta executiva
+CSVs originais
+  -> preparacao e limpeza
+  -> base tratada de avaliacoes
+  -> analise exploratoria e metricas
+  -> documentos LangChain
+  -> embeddings locais
+  -> Chroma vectorstore
+  -> busca semantica por pergunta de negocio
+  -> evidencias para analise executiva
 ```
 
 ## Dados Esperados
 
-Coloque os arquivos do desafio em `data/raw/`:
+Os arquivos originais do desafio devem ser colocados em `data/raw/`:
 
 - `Books_rating.csv`
 - `books_data.csv`
 
-## Configuracao
+Esses arquivos nao sao versionados no GitHub por tamanho e governanca de dados.
+
+## Configuracao do Ambiente
 
 ```powershell
 python -m venv .venv
@@ -47,9 +69,7 @@ pip install -r requirements.txt
 copy .env.example .env
 ```
 
-Depois, edite o arquivo `.env` com a chave do provedor de modelo.
-
-Para criar a base vetorial sem custo de API, mantenha:
+Para execucao sem custo de API, mantenha no `.env`:
 
 ```text
 EMBEDDING_PROVIDER=local
@@ -57,13 +77,8 @@ LOCAL_EMBEDDING_MODEL=sentence-transformers/paraphrase-multilingual-MiniLM-L12-v
 LOCAL_EMBEDDING_OFFLINE=true
 ```
 
-Nesse modo, os embeddings sao calculados localmente no computador. O modelo e
-baixado uma vez na primeira execucao. Depois disso, a variavel
-`LOCAL_EMBEDDING_OFFLINE=true` faz a consulta usar apenas o cache local.
-
-O script de consulta retorna evidencias recuperadas da base vetorial local. Ele
-nao chama um modelo externo de linguagem, evitando custo de API durante a
-validacao inicial.
+Nesse modo, os embeddings sao calculados localmente. O modelo precisa estar no
+cache local para uso offline.
 
 ## Execucao Passo a Passo
 
@@ -73,7 +88,12 @@ python scripts/02_preparar_dados.py --max-linhas 1000
 python scripts/03_criar_base_vetorial.py
 python scripts/04_perguntar.py "<pergunta de negocio>" --nota-min 4
 python scripts/04_perguntar.py "<pergunta de negocio>" --nota-max 2
+python scripts/05_gerar_resumo_executivo.py
 ```
+
+O arquivo gerado pelo script `05` fica em `reports/`, pasta local ignorada pelo
+Git. Ele serve como insumo para apresentacao, sem expor anotacoes privadas no
+repositorio.
 
 ## Interface Streamlit
 
@@ -81,23 +101,36 @@ python scripts/04_perguntar.py "<pergunta de negocio>" --nota-max 2
 .\.venv\Scripts\python.exe -m streamlit run app.py --server.port 8502 --server.fileWatcherType none
 ```
 
-A interface permite informar uma pergunta de negocio, aplicar filtros por nota
-e visualizar as evidencias recuperadas da base vetorial local.
+A interface possui uma visao executiva com metricas, impacto operacional e
+distribuicao de notas, alem de uma area de consulta semantica com filtros por
+nota.
+
+## Metricas de Qualidade
+
+As metricas recomendadas para avaliar a solucao sao:
+
+- cobertura de evidencias recuperadas por pergunta;
+- fidelidade entre evidencia textual e conclusao;
+- utilidade para decisao de negocio;
+- acionabilidade da proxima etapa sugerida;
+- reducao de tempo em relacao ao processo manual;
+- economia estimada por ciclo de analise.
 
 ## Estrutura do Projeto
 
 ```text
-app.py                    interface Streamlit para consulta visual
-data/raw/                 bases originais
-data/processed/           bases tratadas para analise e RAG
-reports/                  materiais produzidos para analise
-scripts/                  comandos executaveis passo a passo
+app.py                    interface Streamlit da POC
+data/raw/                 bases originais locais
+data/processed/           base tratada local
+docs/                     documentos de alinhamento da entrega
+reports/                  saidas locais para apresentacao e analise
+scripts/                  scripts numerados de execucao
 src/a3_book_insights/     pacote Python reutilizavel
 vectorstore/              base vetorial local com Chroma
 ```
 
-## Observacoes
+## Governanca da Entrega
 
-O projeto possui duas formas de execucao: pelos scripts numerados, para mostrar
-cada etapa do processamento, e pela interface Streamlit, para consultar as
-evidencias de forma visual.
+O repositorio contem codigo, documentacao e estrutura de pastas. Arquivos
+sensiveis, dados brutos, dados tratados, base vetorial, logs, ambiente virtual e
+anotacoes internas ficam fora do GitHub via `.gitignore`.

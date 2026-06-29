@@ -3,80 +3,100 @@
 ## Desafio
 
 A editora explora avaliacoes de livros manualmente. O processo atual leva cerca
-de 3 dias e envolve 5 analistas. O desafio e propor uma solucao que acelere a
-exploracao, extraia insights acionaveis e conecte o trabalho tecnico ao impacto
-de negocio.
+de 3 dias e envolve 5 analistas. O objetivo e criar uma solucao que acelere a
+exploracao, extraia insights acionaveis e conecte o trabalho tecnico a impacto
+operacional e financeiro.
 
-## Escopo da Versao Inicial
+## Hipotese Principal
 
-A primeira versao sera uma solucao RAG com LangChain para analise de
-avaliacoes de livros.
+Uma POC com busca semantica, base vetorial e filtros de negocio pode reduzir a
+triagem manual de avaliacoes, permitindo que os analistas encontrem evidencias
+relevantes em minutos, nao em dias.
 
-Ele deve apoiar analises como:
+## Escopo Implementado
 
-- identificacao de reclamacoes em avaliacoes com baixa nota;
-- priorizacao de autores ou categorias que merecem atencao editorial;
-- localizacao de usuarios com avaliacoes detalhadas;
-- comparacao entre fatores de satisfacao positiva e negativa;
-- recuperacao das evidencias que sustentam cada resposta.
+- Preparacao dos dados de avaliacoes e metadados de livros.
+- Conversao de avaliacoes em documentos pesquisaveis.
+- Criacao de base vetorial local com Chroma.
+- Consulta semantica por pergunta de negocio.
+- Filtros por nota para comparar avaliacoes positivas e negativas.
+- Analise exploratoria da base tratada.
+- Estimativa de impacto operacional com base nos dados do desafio.
+- Interface Streamlit para demonstracao da POC.
 
 ## Arquitetura
 
 ```text
 bases CSV
   -> preparacao dos dados
-  -> documentos de avaliacoes
-  -> representacoes vetoriais
-  -> base vetorial Chroma
+  -> base tratada
+  -> analise exploratoria
+  -> documentos LangChain
+  -> embeddings locais
+  -> Chroma vectorstore
   -> recuperador de evidencias
-  -> instrucao LangChain
-  -> resposta com citacoes
+  -> terminal e Streamlit
 ```
 
-## Roteiro
+## Entregaveis do Projeto
 
-### Etapa 1 - Fundacao do projeto
+### Codigo no GitHub
 
-- Criar a estrutura do repositorio.
-- Definir dependencias e variaveis de ambiente.
-- Adicionar plano do projeto e README.
+Repositorio com scripts, pacote Python, interface Streamlit, documentacao e
+estrutura reproduzivel.
 
-### Etapa 2 - Preparacao dos dados
+### POC da Solucao
 
-- Carregar notas, avaliacoes e metadados de livros.
-- Unir as duas bases.
-- Normalizar colunas relevantes.
-- Criar uma base tratada para iteracao rapida.
+Aplicacao Streamlit e script de consulta semantica que permitem explorar a base
+por perguntas de negocio e recuperar evidencias textuais.
 
-### Etapa 3 - RAG com LangChain
+### Insumos Para Apresentacao
 
-- Converter avaliacoes em objetos `Document` do LangChain.
-- Gerar representacoes vetoriais.
-- Persistir uma base vetorial local com Chroma.
-- Criar recuperador de evidencias e cadeia de perguntas e respostas.
+O script `05_gerar_resumo_executivo.py` gera localmente um resumo com EDA,
+metricas e impacto estimado. O arquivo gerado fica em `reports/` e nao e
+versionado.
 
-### Etapa 4 - Avaliacao
+## Metricas de Avaliacao
 
-- Medir quantidade de evidencias recuperadas.
-- Medir completude das fontes.
-- Criar um pequeno conjunto de perguntas para avaliacao manual.
-- Avaliar utilidade, fidelidade e acionabilidade.
+- Cobertura: evidencias recuperadas por pergunta.
+- Fidelidade: aderencia entre evidencia e conclusao.
+- Utilidade: apoio a decisoes sobre autores, categorias, livros ou usuarios.
+- Acionabilidade: clareza da proxima investigacao sugerida.
+- Tempo: comparacao entre fluxo manual e POC.
+- Impacto: economia estimada por ciclo de analise.
 
-### Etapa 5 - Narrativa de negocio
+## Impacto Esperado
 
-- Estimar reducao do custo manual.
-- Resumir insights por autor, categoria e usuario.
-- Preparar uma apresentacao de 30 minutos.
+Com base no enunciado, o processo manual envolve 5 analistas com salario mensal
+de R$ 5.000,00. Considerando 22 dias uteis, o custo diario aproximado do time e
+de R$ 1.136,36. Um ciclo manual de 3 dias custa cerca de R$ 3.409,09.
 
-### Etapa 6 - Aplicacao opcional
+Se a POC reduzir a triagem para 0,5 dia, o custo estimado por ciclo cai para
+cerca de R$ 568,18, liberando aproximadamente 100 horas de trabalho por ciclo.
 
-- Adicionar uma interface em Streamlit depois que a prova de conceito no
-  terminal estiver funcionando.
+## Roadmap
+
+### Curto Prazo
+
+- Ampliar o volume processado alem da amostra inicial.
+- Criar perguntas padrao para avaliacao manual da qualidade.
+- Registrar tempo real de execucao das consultas.
+
+### Medio Prazo
+
+- Adicionar filtros por autor, categoria, editora e periodo.
+- Criar sumarizacao com LLM quando houver cota ou orcamento disponivel.
+- Gerar rankings de oportunidades por autor ou categoria.
+
+### Longo Prazo
+
+- Integrar a solucao ao fluxo dos analistas.
+- Monitorar satisfacao do usuario e tempo economizado.
+- Criar avaliacao periodica de fidelidade e utilidade das respostas.
 
 ## Criterios de Sucesso
 
 - O projeto pode ser executado a partir das instrucoes do README.
-- As respostas incluem evidencias da base de avaliacoes.
-- A solucao conecta claramente resultados de processamento de linguagem natural
-  e modelos de linguagem a decisoes de negocio.
-- A narrativa final e clara para um publico nao tecnico.
+- A POC recupera evidencias textuais rastreaveis.
+- A solucao apresenta impacto de negocio mensuravel.
+- A narrativa final e clara para publico tecnico e nao tecnico.

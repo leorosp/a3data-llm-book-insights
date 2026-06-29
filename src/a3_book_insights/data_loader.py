@@ -15,6 +15,13 @@ def _first_existing_column(df: pd.DataFrame, candidates: list[str]) -> str | Non
     return None
 
 
+def _clean_metadata_value(value: object) -> str:
+    if pd.isna(value):
+        return ""
+    text = str(value).strip()
+    return "" if text.lower() in {"nan", "none", "<na>"} else text
+
+
 def load_raw_data(
     ratings_path: Path,
     books_path: Path,
@@ -74,11 +81,11 @@ def reviews_to_documents(df: pd.DataFrame) -> list[Document]:
     for idx, row in df.iterrows():
         metadata = {
             "row_id": int(idx),
-            "title": str(row.get("title", "")),
-            "score": str(row.get("score", "")),
-            "user_id": str(row.get("user_id", "")),
-            "author": str(row.get("authors", "")),
-            "category": str(row.get("categories", "")),
+            "title": _clean_metadata_value(row.get("title", "")),
+            "score": _clean_metadata_value(row.get("score", "")),
+            "user_id": _clean_metadata_value(row.get("user_id", "")),
+            "author": _clean_metadata_value(row.get("authors", "")),
+            "category": _clean_metadata_value(row.get("categories", "")),
         }
         documents.append(Document(page_content=str(row["review_text"]), metadata=metadata))
     return documents

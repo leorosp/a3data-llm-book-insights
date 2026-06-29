@@ -10,30 +10,7 @@ sys.path.append("src")
 
 from a3_book_insights.config import VECTORSTORE_DIR
 from a3_book_insights.rag_chain import load_vectorstore
-
-
-def _converter_nota(valor: object) -> float | None:
-    try:
-        return float(valor)
-    except (TypeError, ValueError):
-        return None
-
-
-def _passa_filtro_nota(nota: float | None, nota_min: float | None, nota_max: float | None) -> bool:
-    if nota is None:
-        return False
-    if nota_min is not None and nota < nota_min:
-        return False
-    if nota_max is not None and nota > nota_max:
-        return False
-    return True
-
-
-def _resumir_texto(texto: str, limite: int = 500) -> str:
-    texto_limpo = " ".join(texto.split())
-    if len(texto_limpo) <= limite:
-        return texto_limpo
-    return f"{texto_limpo[:limite].rstrip()}..."
+from a3_book_insights.retrieval import buscar_evidencias, limpar_valor_metadata, resumir_texto
 
 
 def main() -> None:
@@ -53,17 +30,14 @@ def main() -> None:
 
     # Carrega a base vetorial criada anteriormente e usa embeddings locais para buscar.
     vectorstore = load_vectorstore(VECTORSTORE_DIR)
-    fetch_k = max(args.fetch_k, args.top_k)
-    candidatos = vectorstore.similarity_search_with_score(args.pergunta, k=fetch_k)
-
-    # Filtra as evidencias por nota, quando os limites forem informados.
-    resultados = []
-    for doc, score in candidatos:
-        nota = _converter_nota(doc.metadata.get("score"))
-        if _passa_filtro_nota(nota, args.nota_min, args.nota_max):
-            resultados.append((doc, score, nota))
-        if len(resultados) >= args.top_k:
-            break
+    resultados = buscar_evidencias(
+        vectorstore=vectorstore,
+        pergunta=args.pergunta,
+        nota_min=args.nota_min,
+        nota_max=args.nota_max,
+        top_k=args.top_k,
+        fetch_k=args.fetch_k,
+    )
 
     # Exibe as evidencias que podem sustentar a analise de negocio.
     print("\nEVIDENCIAS RECUPERADAS\n")
@@ -74,13 +48,16 @@ def main() -> None:
         print("Nenhuma evidencia encontrada com os filtros informados.")
         raise SystemExit(0)
 
-    for posicao, (doc, score, nota) in enumerate(resultados, start=1):
+    for posicao, evidencia in enumerate(resultados, start=1):
+        doc = evidencia.documento
         metadata = doc.metadata
+        titulo = limpar_valor_metadata(metadata.get("title"), padrao="Titulo nao informado")
+        usuario = limpar_valor_metadata(metadata.get("user_id"), padrao="Usuario nao informado")
         print(
-            f"{posicao}. titulo={metadata.get('title')} | nota={nota:g} "
-            f"| usuario={metadata.get('user_id')} | distancia={score:.4f}"
+            f"{posicao}. titulo={titulo} | nota={evidencia.nota:g} "
+            f"| usuario={usuario} | distancia={evidencia.distancia:.4f}"
         )
-        print(f"   trecho={_resumir_texto(doc.page_content)}\n")
+        print(f"   trecho={resumir_texto(doc.page_content)}\n")
 
 
 if __name__ == "__main__":
