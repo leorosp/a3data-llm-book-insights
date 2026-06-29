@@ -33,7 +33,7 @@ execucao com embeddings locais ou, opcionalmente, provedor externo.
 ### `.gitignore`
 
 Define arquivos e pastas que nao devem ser versionados, como `.env`, ambiente
-virtual, dados locais, base vetorial, logs e materiais internos.
+virtual, dados locais, base vetorial, logs e artefatos locais.
 
 ### `app.py`
 
@@ -63,7 +63,7 @@ nesta pasta a base pronta para analise e busca semantica.
 ### `reports/`
 
 Pasta local para materiais produzidos durante a analise, como resumo executivo,
-metricas e insumos de apresentacao. O conteudo desta pasta fica fora do GitHub.
+metricas e artefatos de apoio. O conteudo desta pasta fica fora do GitHub.
 
 ### `vectorstore/`
 

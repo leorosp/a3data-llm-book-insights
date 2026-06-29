@@ -77,7 +77,7 @@ pip install -r requirements.txt
 copy .env.example .env
 ```
 
-Para execucao sem custo de API, mantenha no `.env`:
+Para execucao local e reprodutivel, mantenha no `.env`:
 
 ```text
 EMBEDDING_PROVIDER=local
@@ -86,7 +86,8 @@ LOCAL_EMBEDDING_OFFLINE=true
 ```
 
 Nesse modo, os embeddings sao calculados localmente. O modelo precisa estar no
-cache local para uso offline.
+cache local para uso offline, reduzindo dependencias externas durante a
+avaliacao da POC.
 
 ## Execucao Passo a Passo
 
@@ -100,8 +101,7 @@ python scripts/05_gerar_resumo_executivo.py
 ```
 
 O arquivo gerado pelo script `05` fica em `reports/`, pasta local ignorada pelo
-Git. Ele serve como insumo para apresentacao, sem expor anotacoes privadas no
-repositorio.
+Git. Ele serve como artefato de apoio para apresentacao e validacao da analise.
 
 ## Interface Streamlit
 
@@ -141,4 +141,4 @@ vectorstore/              base vetorial local com Chroma
 
 O repositorio contem codigo, documentacao e estrutura de pastas. Arquivos
 sensiveis, dados brutos, dados tratados, base vetorial, logs, ambiente virtual e
-anotacoes internas ficam fora do GitHub via `.gitignore`.
+artefatos locais ficam fora do GitHub via `.gitignore`.
