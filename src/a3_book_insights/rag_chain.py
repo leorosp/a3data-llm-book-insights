@@ -50,7 +50,7 @@ def build_embeddings() -> OpenAIEmbeddings | LocalSentenceTransformerEmbeddings:
             "LOCAL_EMBEDDING_MODEL",
             "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
         )
-        local_files_only = _env_flag("LOCAL_EMBEDDING_OFFLINE", default=True)
+        local_files_only = _env_flag("LOCAL_EMBEDDING_OFFLINE", default=False)
         return LocalSentenceTransformerEmbeddings(model_name=model, local_files_only=local_files_only)
 
     model = os.getenv("OPENAI_EMBEDDING_MODEL", "text-embedding-3-small")

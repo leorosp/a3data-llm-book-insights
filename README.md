@@ -61,14 +61,22 @@ CSVs originais
 
 ## Dados Esperados
 
-Os arquivos originais do desafio devem ser colocados em `data/raw/`:
+Os arquivos originais do desafio devem ser baixados pelos links disponibilizados
+no enunciado e colocados em `data/raw/` com os seguintes nomes:
 
 - `Books_rating.csv`
 - `books_data.csv`
 
+Links indicados no PDF do desafio:
+
+- [Arquivo de dados 1](https://drive.google.com/file/d/1v-OK4cJqSF4dcheIQlK1-W6JPbOpV44j/view?usp=sharing)
+- [Arquivo de dados 2](https://drive.google.com/file/d/1-gmeMK-PmZe6rYAQPvXKdUXfD01uIbsd/view?usp=sharing)
+
 Esses arquivos nao sao versionados no GitHub por tamanho e governanca de dados.
 
 ## Configuracao do Ambiente
+
+Windows:
 
 ```powershell
 python -m venv .venv
@@ -77,17 +85,26 @@ pip install -r requirements.txt
 copy .env.example .env
 ```
 
+macOS/Linux:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env
+```
+
 Para execucao local e reprodutivel, mantenha no `.env`:
 
 ```text
 EMBEDDING_PROVIDER=local
 LOCAL_EMBEDDING_MODEL=sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
-LOCAL_EMBEDDING_OFFLINE=true
+LOCAL_EMBEDDING_OFFLINE=false
 ```
 
-Nesse modo, os embeddings sao calculados localmente. O modelo precisa estar no
-cache local para uso offline, reduzindo dependencias externas durante a
-avaliacao da POC.
+Na primeira execucao, `LOCAL_EMBEDDING_OFFLINE=false` permite baixar o modelo de
+embeddings local. Depois que o modelo estiver em cache, a variavel pode ser
+alterada para `true` para executar sem novos downloads.
 
 ## Execucao Passo a Passo
 
@@ -102,6 +119,13 @@ python scripts/05_gerar_resumo_executivo.py
 
 O arquivo gerado pelo script `05` fica em `reports/`, pasta local ignorada pelo
 Git. Ele serve como artefato de apoio para apresentacao e validacao da analise.
+
+Resultado esperado do fluxo:
+
+- `data/processed/avaliacoes_preparadas.csv` com a amostra tratada;
+- `vectorstore/` com a base vetorial Chroma;
+- evidencias retornadas no terminal para perguntas de negocio;
+- `reports/resumo_executivo.md` com metricas e impacto estimado.
 
 ## Interface Streamlit
 
